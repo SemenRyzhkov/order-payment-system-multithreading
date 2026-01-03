@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: payment-stub
+
+stub:
+  payment:
+    decline-enabled: ${STUB_PAYMENT_DECLINE_ENABLED:true}
+    decline-probability: ${STUB_PAYMENT_DECLINE_PROBABILITY:0.2}
+    authorize-latency-min-millis: ${STUB_PAYMENT_AUTHORIZE_LATENCY_MIN_MILLIS:100}
+    authorize-latency-max-millis: ${STUB_PAYMENT_AUTHORIZE_LATENCY_MAX_MILLIS:800}
+    capture-latency-min-millis: ${STUB_PAYMENT_CAPTURE_LATENCY_MIN_MILLIS:50}
+    capture-latency-max-millis: ${STUB_PAYMENT_CAPTURE_LATENCY_MAX_MILLIS:500}
+    exception-enabled: ${STUB_PAYMENT_EXCEPTION_ENABLED:false}
+    exception-probability: ${STUB_PAYMENT_EXCEPTION_PROBABILITY:0.05}
+
+  warehouse:
+    latency-min-millis: ${STUB_WAREHOUSE_LATENCY_MIN_MILLIS:50}
+    latency-max-millis: ${STUB_WAREHOUSE_LATENCY_MAX_MILLIS:800}
+    exception-enabled: ${STUB_WAREHOUSE_EXCEPTION_ENABLED:false}
+    exception-probability: ${STUB_WAREHOUSE_EXCEPTION_PROBABILITY:0.05}
+    final-amount-min: ${STUB_WAREHOUSE_FINAL_AMOUNT_MIN:100}
+    final-amount-max: ${STUB_WAREHOUSE_FINAL_AMOUNT_MAX:10000}
+
+# настройки Swagger
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+server:
+  port: ${SERVER_PORT:8081}

@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: orders
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "5432:5432"
+    mem_limit: 384m
+    cpus: "1"
+
+  payment-stub:
+    image: payment-stub:latest
+    environment:
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+    mem_limit: 384m
+    cpus: "1"
+
+  order-orchestrator:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/orders
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pass
+      PAYMENT_STUB_URL: http://payment-stub:8081
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - payment-stub
+    mem_limit: 512m
+    cpus: "2"
+

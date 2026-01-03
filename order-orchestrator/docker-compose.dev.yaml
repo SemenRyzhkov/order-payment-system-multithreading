@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: orders
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "5432:5432"
+    mem_limit: 384m
+    cpus: "1"
+
+  payment-stub:
+    image: payment-stub:latest
+    environment:
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+    mem_limit: 384m
+    cpus: "1"
+
+

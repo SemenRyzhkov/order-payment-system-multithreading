@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: order-orchestrator
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:not-set}
+    username: ${SPRING_DATASOURCE_USERNAME:not-set}
+    password: ${SPRING_DATASOURCE_PASSWORD:not-set}
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-master.yaml
+  docker:
+    compose:
+      file: ./order-orchestrator/docker-compose.dev.yaml
+      lifecycle-management: start-and-stop   # поднимает при старте, останавливает при завершении
+      start:
+        command: up                         # использовать `docker compose up`
+        arguments: --force-recreate         # ВСЕГДА пересоздавать контейнеры
+      stop:
+        command: down                     # полностью закрывает контейнеры
+        arguments: -v
+
+# настройки Swagger
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
