@@ -3,9 +3,9 @@
 CREATE TABLE IF NOT EXISTS payment_tasks
 (
     id                  UUID PRIMARY KEY DEFAULT uuidv7(),
-    order_id            UUID NOT NULL,
+    order_id            UUID        NOT NULL,
     status              INTEGER     NOT NULL,
-    step                INTEGER     NOT NULL,
+    step                INTEGER,
     attempts            INTEGER NOT NULL DEFAULT 0,
     next_attempt_at     TIMESTAMPTZ,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),

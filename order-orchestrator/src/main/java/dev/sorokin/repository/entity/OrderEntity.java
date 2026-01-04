@@ -27,18 +27,18 @@ public class OrderEntity {
 
     @Column(name = "payment_status", nullable = false)
     @Convert(converter = PaymentStatusConverter.class)
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
     @Column(name = "client_estimate", nullable = false)
     private BigDecimal clientEstimate;
 
-    @Column(name = "authorized_amount", nullable = false)
+    @Column(name = "authorized_amount")
     private BigDecimal authorizedAmount;
 
-    @Column(name = "capture_amount", nullable = false)
+    @Column(name = "capture_amount")
     private BigDecimal captureAmount;
 
-    @Column(name = "failure _reason")
+    @Column(name = "failure_reason")
     private String failureReason;
 
     @Column(name = "created_at", nullable = false)

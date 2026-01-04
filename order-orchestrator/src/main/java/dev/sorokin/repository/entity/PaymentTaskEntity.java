@@ -29,7 +29,7 @@ public class PaymentTaskEntity {
     @Convert(converter = TaskStatusConverter.class)
     private TaskStatus status;
 
-    @Column(name = "step", nullable = false, length = 32)
+    @Column(name = "step", length = 32)
     @Convert(converter = StepConverter.class)
     private Step step;
 
