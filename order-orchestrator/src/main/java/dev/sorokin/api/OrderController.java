@@ -1,6 +1,6 @@
 package dev.sorokin.api;
 
-import dev.sorokin.domain.OrderEntity;
+import dev.sorokin.repository.entity.OrderEntity;
 import dev.sorokin.domain.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

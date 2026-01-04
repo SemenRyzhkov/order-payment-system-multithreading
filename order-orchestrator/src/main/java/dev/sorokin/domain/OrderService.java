@@ -1,6 +1,8 @@
 package dev.sorokin.domain;
 
 import dev.sorokin.api.OrderCreateRequestDto;
+import dev.sorokin.repository.entity.OrderEntity;
+import dev.sorokin.repository.OrderJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
