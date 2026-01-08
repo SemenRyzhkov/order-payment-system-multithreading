@@ -20,10 +20,6 @@ CREATE INDEX IF NOT EXISTS idx_payment_tasks_status_next_attempt
 CREATE INDEX IF NOT EXISTS idx_payment_tasks_order_id
     ON payment_tasks (order_id);
 
--- Индекс для обработки конкурентных блокировок
-CREATE INDEX IF NOT EXISTS idx_payment_tasks_locked_until
-    ON payment_tasks (locked_until);
-
 -- Уникальный индекс, чтобы избежать дублирования задач на один шаг для одного заказа
 CREATE UNIQUE INDEX IF NOT EXISTS uq_payment_tasks_order_id_step
     ON payment_tasks (order_id, step);

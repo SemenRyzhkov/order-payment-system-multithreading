@@ -61,7 +61,7 @@ public class TaskProcessor {
         TaskStatus taskStatus;
 
         taskStatus = handleAuthResult(authResponse, orderEntity);
-        if (Objects.isNull(taskStatus)) {
+        if (Objects.nonNull(taskStatus)) {
             return taskStatus;
         }
 
@@ -115,15 +115,20 @@ public class TaskProcessor {
                                            AuthorizePaymentResponseDto authResponse,
                                            OrderEntity orderEntity
     ) {
-        log.info("Pricing final amount: {}", pricingResponse.finalAmount());
         BigDecimal finalAmount = pricingResponse.finalAmount();
         BigDecimal authorizedAmount = authResponse.authorizedAmount();
+        log.info("Pricing result: finalAmount={}, authorizedAmount={}, orderId={}",
+                finalAmount, authorizedAmount, orderEntity.getId());
 
         if (finalAmount.compareTo(authorizedAmount) <= 0) {
             return null;
         }
+        String failureReason = "Price after calculation is higher than authorized amount";
+        log.info("Pricing mismatch: {}. OrderId={}",
+                failureReason, orderEntity.getId());
+        orderEntity.setFailureReason(failureReason);
         orderEntity.setPaymentStatus(PaymentStatus.PRICE_CHANGED_FAILED);
-        orderEntity.setFailureReason(pricingResponse.reason());
+        orderJpaRepository.save(orderEntity);
         return TaskStatus.FAILED_NON_RETRYABLE;
 
     }
@@ -135,6 +140,7 @@ public class TaskProcessor {
         log.info("Auth response status: {}", status);
         if (Objects.equals(status, AuthorizationStatus.AUTHORIZED)) {
             orderEntity.setAuthorizedAmount(authResponse.authorizedAmount());
+            orderJpaRepository.save(orderEntity);
             return null;
         }
         orderEntity.setPaymentStatus(PaymentStatus.AUTHORIZATION_FAILED);

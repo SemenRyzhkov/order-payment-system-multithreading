@@ -32,7 +32,6 @@ task-execution:
     poll-interval-ms: ${TASK_EXEC_POLL_INTERVAL_MS:1000}
     batch-size: ${TASK_EXEC_POLL_BATCH_SIZE:100}
     retry-delay: ${TASK_EXEC_POLL_RETRY_DELAY:30s}
-    lock-interval: ${TASK_EXEC_POLL_LOCK_INTERVAL_SECOND:1}
   dispatcher:
     max-attempts: ${TASK_EXEC_DISPATCHER_MAX_ATTEMPTS:10}
     retry-delay: ${TASK_EXEC_DISPATCHER_RETRY_DELAY:1s}

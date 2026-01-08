@@ -1,4 +1,4 @@
-package dev.sorokin.async;
+package dev.sorokin.async.properties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,12 +10,10 @@ import java.time.Duration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "task-execution.poller")
-public class TaskPollerProperties {
+@ConfigurationProperties(prefix = "task-execution.dispatcher")
+public class TaskDispatcherProperties {
 
-    private long pollIntervalMs;
-    private int batchSize;
+    private long maxAttempts;
     private Duration retryDelay;
-    private long lockInterval;
 
 }

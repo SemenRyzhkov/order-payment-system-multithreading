@@ -1,6 +1,7 @@
 package dev.sorokin.async;
 
 
+import dev.sorokin.async.properties.TaskPollerProperties;
 import dev.sorokin.repository.PaymentTaskJpaRepository;
 import dev.sorokin.repository.entity.PaymentTaskEntity;
 import dev.sorokin.repository.entity.TaskStatus;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 
@@ -18,7 +20,7 @@ import java.util.List;
 public class TaskPoller {
 
     private final PaymentTaskJpaRepository taskJpaRepository;
-    private final AsyncTaskExecutor taskExecutor;
+    private final AsyncTaskDispatcher dispatcher;
     private final TaskPollerProperties properties;
 
     @Scheduled(
@@ -26,10 +28,10 @@ public class TaskPoller {
     )
     public void poll() {
         log.info("Polling for tasks");
-        reserveAndProcessTasks();
+        getTaskList().forEach(dispatcher::dispatch);
     }
 
-    public void reserveAndProcessTasks() {
+    public List<PaymentTaskEntity> getTaskList() {
         List<PaymentTaskEntity> taskList = taskJpaRepository
                 .findAndReserveTasks(
                         properties.getBatchSize(),
@@ -45,6 +47,6 @@ public class TaskPoller {
                         .toList()
         );
 
-        taskList.forEach(taskExecutor::execute);
+        return taskList;
     }
 }
