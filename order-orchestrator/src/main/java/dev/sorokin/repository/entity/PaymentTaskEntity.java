@@ -20,7 +20,7 @@ public class PaymentTaskEntity {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    private Long id;
 
     @Column(name = "order_id", nullable = false)
     private UUID orderId;
@@ -44,9 +44,6 @@ public class PaymentTaskEntity {
 
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
-
-    @Column(name = "locked_until")
-    private OffsetDateTime lockedUntil;
 
     @PrePersist
     protected void onCreate() {

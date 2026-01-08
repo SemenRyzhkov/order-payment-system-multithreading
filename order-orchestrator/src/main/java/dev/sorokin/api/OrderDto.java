@@ -8,6 +8,7 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 public record OrderDto(
         UUID id,
+        Long customerId,
         String address,
         String paymentStatus,
         BigDecimal clientEstimate,

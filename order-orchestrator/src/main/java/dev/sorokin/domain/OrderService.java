@@ -29,6 +29,7 @@ public class OrderService {
                 .address(requestDto.address())
                 .paymentStatus(PaymentStatus.NEW)
                 .clientEstimate(requestDto.clientEstimate())
+                .customerId(requestDto.customerId())
                 .build();
 
         var saved = orderRepository.save(entity);

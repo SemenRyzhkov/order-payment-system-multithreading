@@ -1,0 +1,50 @@
+package dev.sorokin.async;
+
+
+import dev.sorokin.repository.PaymentTaskJpaRepository;
+import dev.sorokin.repository.entity.PaymentTaskEntity;
+import dev.sorokin.repository.entity.TaskStatus;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class TaskPoller {
+
+    private final PaymentTaskJpaRepository taskJpaRepository;
+    private final AsyncTaskExecutor taskExecutor;
+    private final TaskPollerProperties properties;
+
+    @Scheduled(
+            fixedRateString = "${task-execution.poller.poll-interval-ms}"
+    )
+    public void poll() {
+        log.info("Polling for tasks");
+        reserveAndProcessTasks();
+    }
+
+    public void reserveAndProcessTasks() {
+        List<PaymentTaskEntity> taskList = taskJpaRepository
+                .findAndReserveTasks(
+                        properties.getBatchSize(),
+                        TaskStatus.IN_PROGRESS.getCode(),
+                        TaskStatus.NEW.getCode(),
+                        TaskStatus.FAILED_RETRYABLE.getCode()
+                );
+
+        log.info("Task List size: {}. Task List IDs: {}",
+                taskList.size(),
+                taskList.stream()
+                        .map(PaymentTaskEntity::getId)
+                        .toList()
+        );
+
+        taskList.forEach(taskExecutor::execute);
+    }
+}

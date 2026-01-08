@@ -2,15 +2,14 @@
 
 CREATE TABLE IF NOT EXISTS payment_tasks
 (
-    id                  UUID PRIMARY KEY DEFAULT uuidv7(),
+    id                  BIGSERIAL PRIMARY KEY,
     order_id            UUID        NOT NULL,
     status              INTEGER     NOT NULL,
     step                INTEGER,
     attempts            INTEGER NOT NULL DEFAULT 0,
     next_attempt_at     TIMESTAMPTZ,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    locked_until        TIMESTAMPTZ
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
 -- Индекс для эффективного выбора задач, готовых к обработке

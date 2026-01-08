@@ -3,8 +3,9 @@
 CREATE TABLE IF NOT EXISTS orders
 (
     id                  UUID PRIMARY KEY DEFAULT uuidv7(),
+    customer_id         BIGSERIAL      NOT NULL,
     address             TEXT,
-    payment_status      INTEGER     NOT NULL,
+    payment_status      INTEGER        NOT NULL,
     client_estimate     NUMERIC(19, 2) NOT NULL,
     authorized_amount   NUMERIC(19, 2),
     capture_amount      NUMERIC(19, 2),
