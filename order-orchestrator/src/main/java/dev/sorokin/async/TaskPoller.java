@@ -38,6 +38,7 @@ public class TaskPoller {
     public List<PaymentTaskEntity> getTaskList() {
         List<PaymentTaskEntity> taskList = taskJpaRepository
                 .findAndReserveTasks(
+                        (int) properties.getRetryDelay().toSeconds(),
                         properties.getBatchSize(),
                         TaskStatus.IN_PROGRESS.getCode(),
                         TaskStatus.NEW.getCode(),

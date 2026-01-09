@@ -16,6 +16,5 @@ public class TaskPollerProperties {
     private long pollIntervalMs;
     private int batchSize;
     private Duration retryDelay;
-    private long lockInterval;
 
 }

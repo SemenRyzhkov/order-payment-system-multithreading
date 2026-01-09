@@ -19,7 +19,9 @@ public interface PaymentTaskJpaRepository
                 SET status = :statusReserved,
                     step = COALESCE(step, 0),
                     attempts = attempts + 1,
-                    next_attempt_at = NOW() + ((2 ^ (attempts + 1)) * INTERVAL '1 second'),
+                    next_attempt_at = NOW()
+                        + :baseDelaySec * INTERVAL '1 second'
+                        + (LEAST(2 ^ (attempts), 300)) * INTERVAL '1 second',
                     updated_at = NOW()
                 WHERE id IN (
                     SELECT id FROM (
@@ -35,6 +37,7 @@ public interface PaymentTaskJpaRepository
             """, nativeQuery = true)
     @Transactional
     List<PaymentTaskEntity> findAndReserveTasks(
+            @Param("baseDelaySec") int baseDelaySec,
             @Param("limit") int limit,
             @Param("statusReserved") int statusReserved,
             @Param("statusNew") int statusNew,

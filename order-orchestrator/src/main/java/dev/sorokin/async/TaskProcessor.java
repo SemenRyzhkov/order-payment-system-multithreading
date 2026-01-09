@@ -6,7 +6,6 @@ import dev.sorokin.api.warehouse.CalculatePricingRequestDto;
 import dev.sorokin.api.warehouse.CalculatePricingResponseDto;
 import dev.sorokin.client.StubHttpClient;
 import dev.sorokin.repository.OrderJpaRepository;
-import dev.sorokin.repository.PaymentTaskJpaRepository;
 import dev.sorokin.repository.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,15 +23,15 @@ import java.util.concurrent.ExecutorService;
 public class TaskProcessor {
 
     private final OrderJpaRepository orderJpaRepository;
-    private final PaymentTaskJpaRepository taskJpaRepository;
     private final StubHttpClient httpClient;
     private final ExecutorService taskProcessorThreadPool;
 
-    public TaskStatus processTask(PaymentTaskEntity task) {
+    public PaymentTaskEntity processTask(PaymentTaskEntity task) {
         Optional<OrderEntity> optionalOrder = orderJpaRepository.findById(task.getOrderId());
         if (optionalOrder.isEmpty()) {
             log.info("Order not found for task {}", task.getId());
-            return TaskStatus.FAILED_NON_RETRYABLE;
+            task.setStatus( TaskStatus.FAILED_NON_RETRYABLE);
+            return task;
         }
         OrderEntity order = optionalOrder.get();
         Step currentStep = task.getStep();
@@ -47,15 +46,16 @@ public class TaskProcessor {
                                         new CalculatePricingRequestDto(order.getId()))
                         )
                 );
-                case CAPTURE -> handleCaptureStep(order);
+                case CAPTURE -> handleCaptureStep(task, order);
             };
         } catch (Exception e) {
             log.error("Unexpected error during task processing", e);
-            return TaskStatus.FAILED_RETRYABLE;
+            task.setStatus(TaskStatus.FAILED_RETRYABLE);
+            return task;
         }
     }
 
-    private TaskStatus handleAuthStep(PaymentTaskEntity task, OrderEntity order) {
+    private PaymentTaskEntity handleAuthStep(PaymentTaskEntity task, OrderEntity order) {
         CompletableFuture<AuthorizePaymentResponseDto> authFuture = supplyAsync(
                 () -> httpClient.authorizePayment(new AuthorizePaymentRequestDto(
                         order.getCustomerId(),
@@ -73,21 +73,22 @@ public class TaskProcessor {
                 order.getId()
         );
         if (authResponse == null) {
-            return TaskStatus.FAILED_RETRYABLE;
+            task.setStatus(TaskStatus.FAILED_RETRYABLE);
+            return task;
         }
 
         TaskStatus authStatus = handleAuthResult(authResponse, order);
         if (authStatus != null) {
-            return authStatus;
+            task.setStatus(authStatus);
+            return task;
         }
 
         task.setStep(Step.REPRICE);
-        taskJpaRepository.save(task);
 
         return handleRepriceStep(task, order, pricingFuture);
     }
 
-    private TaskStatus handleRepriceStep(PaymentTaskEntity task,
+    private PaymentTaskEntity handleRepriceStep(PaymentTaskEntity task,
                                          OrderEntity order,
                                          CompletableFuture<CalculatePricingResponseDto> pricingFuture
     ) {
@@ -98,29 +99,33 @@ public class TaskProcessor {
         );
 
         if (pricingResponse == null) {
-            return TaskStatus.FAILED_RETRYABLE;
+            task.setStatus(TaskStatus.FAILED_RETRYABLE);
+            return task;
         }
 
         TaskStatus pricingStatus = handlePricingResult(pricingResponse, order);
         if (pricingStatus != null) {
-            return pricingStatus;
+            task.setStatus(pricingStatus);
+            return task;
         }
 
         task.setStep(Step.CAPTURE);
-        taskJpaRepository.save(task);
 
-        return handleCaptureStep(order);
+        return handleCaptureStep(task, order);
     }
 
-    private TaskStatus handleCaptureStep(OrderEntity order) {
+    private PaymentTaskEntity handleCaptureStep(PaymentTaskEntity task, OrderEntity order) {
         try {
             CapturePaymentResponseDto captureResponse = httpClient.capturePayment(
                     new CapturePaymentRequestDto(order.getFinalAmount(), order.getCustomerId())
             );
-            return handleCaptureResult(captureResponse, order);
+            TaskStatus captureStatus = handleCaptureResult(captureResponse, order);
+            task.setStatus(captureStatus);
+            return task;
         } catch (Exception e) {
             log.error("Failed to capture payment for order {}", order.getId(), e);
-            return TaskStatus.FAILED_RETRYABLE;
+            task.setStatus(TaskStatus.FAILED_RETRYABLE);
+            return task;
         }
     }
 
