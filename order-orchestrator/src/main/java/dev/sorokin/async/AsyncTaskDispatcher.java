@@ -20,18 +20,18 @@ import java.util.concurrent.ExecutorService;
 public class AsyncTaskDispatcher {
 
     private final TaskProcessor taskProcessor;
-    private final ExecutorService taskExecutorThreadPool;
+    private final ExecutorService taskDispatcherThreadPool;
     private final PaymentTaskJpaRepository taskRepository;
     private final TaskDispatcherProperties properties;
 
     public void dispatch(PaymentTaskEntity task) {
-        CompletableFuture.supplyAsync(() -> taskProcessor.processTask(task), taskExecutorThreadPool)
+        CompletableFuture.supplyAsync(() -> taskProcessor.processTask(task), taskDispatcherThreadPool)
                 .thenAccept(result -> handleTaskResult(task, result))
                 .exceptionally(e -> handleException(e, task));
     }
 
     private void handleTaskResult(PaymentTaskEntity task, TaskStatus result) {
-        log.info("Task result: {}", result);
+        log.info("Task {} finished with result: {}", task.getId(), result);
         switch (result) {
             case TaskStatus.SUCCEEDED -> succeedProcess(task, result);
             case TaskStatus.FAILED_NON_RETRYABLE -> finishProcess(task, result);

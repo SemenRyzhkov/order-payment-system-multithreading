@@ -38,6 +38,9 @@ public class OrderEntity {
     @Column(name = "authorized_amount")
     private BigDecimal authorizedAmount;
 
+    @Column(name = "final_amount")
+    private BigDecimal finalAmount;
+
     @Column(name = "capture_amount")
     private BigDecimal captureAmount;
 

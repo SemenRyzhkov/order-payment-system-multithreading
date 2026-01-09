@@ -10,14 +10,14 @@ stub:
     authorize-latency-max-millis: ${STUB_PAYMENT_AUTHORIZE_LATENCY_MAX_MILLIS:800}
     capture-latency-min-millis: ${STUB_PAYMENT_CAPTURE_LATENCY_MIN_MILLIS:50}
     capture-latency-max-millis: ${STUB_PAYMENT_CAPTURE_LATENCY_MAX_MILLIS:500}
-    exception-enabled: ${STUB_PAYMENT_EXCEPTION_ENABLED:false}
-    exception-probability: ${STUB_PAYMENT_EXCEPTION_PROBABILITY:0.05}
+    exception-enabled: ${STUB_PAYMENT_EXCEPTION_ENABLED:true}
+    exception-probability: ${STUB_PAYMENT_EXCEPTION_PROBABILITY:0.3}
 
   warehouse:
     latency-min-millis: ${STUB_WAREHOUSE_LATENCY_MIN_MILLIS:50}
     latency-max-millis: ${STUB_WAREHOUSE_LATENCY_MAX_MILLIS:800}
-    exception-enabled: ${STUB_WAREHOUSE_EXCEPTION_ENABLED:false}
-    exception-probability: ${STUB_WAREHOUSE_EXCEPTION_PROBABILITY:0.05}
+    exception-enabled: ${STUB_WAREHOUSE_EXCEPTION_ENABLED:true}
+    exception-probability: ${STUB_WAREHOUSE_EXCEPTION_PROBABILITY:0.3}
     final-amount-min: ${STUB_WAREHOUSE_FINAL_AMOUNT_MIN:100}
     final-amount-max: ${STUB_WAREHOUSE_FINAL_AMOUNT_MAX:10000}
 

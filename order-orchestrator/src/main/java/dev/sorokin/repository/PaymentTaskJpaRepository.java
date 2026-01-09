@@ -17,6 +17,7 @@ public interface PaymentTaskJpaRepository
     @Query(value = """
                 UPDATE payment_tasks
                 SET status = :statusReserved,
+                    step = COALESCE(step, 0),
                     attempts = attempts + 1,
                     next_attempt_at = NOW() + ((2 ^ (attempts + 1)) * INTERVAL '1 second'),
                     updated_at = NOW()
