@@ -2,10 +2,18 @@ package dev.sorokin.api;
 
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
-@Builder
+@Builder(toBuilder = true)
 public record OrderDto(
         UUID id,
-        String address // todo остальные поля
+        Long customerId,
+        String address,
+        String paymentStatus,
+        BigDecimal clientEstimate,
+        BigDecimal authorizedAmount,
+        BigDecimal capturedAmount,
+        BigDecimal finalAmount,
+        String failureReason
 ) { }

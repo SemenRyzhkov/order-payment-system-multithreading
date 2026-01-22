@@ -1,0 +1,1 @@
+docker run --rm -v ${PWD}:/scripts grafana/k6 run /scripts/create_and_poll.js

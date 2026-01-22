@@ -5,6 +5,8 @@ spring:
     url: ${SPRING_DATASOURCE_URL:not-set}
     username: ${SPRING_DATASOURCE_USERNAME:not-set}
     password: ${SPRING_DATASOURCE_PASSWORD:not-set}
+    hikari:
+      maximum-pool-size: 90
   liquibase:
     change-log: classpath:/db/changelog/changelog-master.yaml
   docker:
@@ -17,6 +19,35 @@ spring:
       stop:
         command: down                     # полностью закрывает контейнеры
         arguments: -v
+  threads:
+    virtual:
+      enabled: ${SPRING_THREADS_VIRTUAL_ENABLED:false}
+
+clients:
+  stub:
+    base-url: ${STUB_BASE_URL:http://localhost:8081}
+    read-timeout: ${STUB_BASE_READ_TIMEOUT:30s}
+    connect-timeout: ${STUB_BASE_CONNECT_TIMEOUT:30s}
+
+task-execution:
+  poller:
+    poll-interval-ms: ${TASK_EXEC_POLL_INTERVAL_MS:1000}
+    batch-size: ${TASK_EXEC_POLL_BATCH_SIZE:100}
+    retry-delay: ${TASK_EXEC_POLL_RETRY_DELAY:1s}
+  dispatcher:
+    max-attempts: ${TASK_EXEC_DISPATCHER_MAX_ATTEMPTS:10}
+    retry-delay: ${TASK_EXEC_DISPATCHER_RETRY_DELAY:1s}
+    thread-pool-size: ${TASK_EXEC_DISPATCHER_THREAD_POOL_SIZE:10}
+  external-http:
+    thread-pool-size: ${TASK_EXEC_EXTERNAL_HTTP_THREAD_POOL_SIZE:16}
+
+server:
+  tomcat:
+    max-connections: 10000 # максимальное кол-во открытых сокетов (коннектов) (дефолт - 8192)
+    threads:
+      max-queue-capacity: 1000 # размер очереди запросов (дефолт - Integer.MAX_VALUE)
+      min-spare: 5 # минимальное кол-во потоков (нативных) в пуле томката (дефолт - 10)
+      max: 10 # максимальное кол-во потоков (нативных) в пуле томката (дефолт - 200)
 
 # настройки Swagger
 springdoc:

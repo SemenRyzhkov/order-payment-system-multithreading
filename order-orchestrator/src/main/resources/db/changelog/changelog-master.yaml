@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: classpath:db/changelog/sql/001-init-orders-table.sql
+  - include:
+      file: classpath:db/changelog/sql/002-init-payment-tasks-table.sql
