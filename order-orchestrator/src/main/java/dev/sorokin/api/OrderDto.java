@@ -13,6 +13,7 @@ public record OrderDto(
         String paymentStatus,
         BigDecimal clientEstimate,
         BigDecimal authorizedAmount,
-        BigDecimal captureAmount,
+        BigDecimal capturedAmount,
+        BigDecimal finalAmount,
         String failureReason
 ) { }

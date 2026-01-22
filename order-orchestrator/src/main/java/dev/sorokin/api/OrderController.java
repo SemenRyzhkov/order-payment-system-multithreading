@@ -47,10 +47,12 @@ public class OrderController {
                 .id(order.getId())
                 .address(order.getAddress())
                 .paymentStatus(order.getPaymentStatus().name())
-                .captureAmount(order.getCaptureAmount())
+                .capturedAmount(order.getCaptureAmount())
                 .clientEstimate(order.getClientEstimate())
                 .failureReason(order.getFailureReason())
                 .authorizedAmount(order.getAuthorizedAmount())
+                .finalAmount(order.getFinalAmount())
+                .customerId(order.getCustomerId())
                 .build();
     }
 }

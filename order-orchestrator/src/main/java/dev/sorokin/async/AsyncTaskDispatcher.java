@@ -25,7 +25,7 @@ public class AsyncTaskDispatcher {
 
     public void dispatch(PaymentTaskEntity task) {
         CompletableFuture.supplyAsync(() -> taskProcessor.processTask(task), taskDispatcherThreadPool)
-                .thenAccept(result -> handleTaskResult(task))
+                .thenAccept(this::handleTaskResult)
                 .exceptionally(e -> handleException(e, task));
     }
 
